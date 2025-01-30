@@ -1,34 +1,20 @@
-function translate () {
-    // Initialization
-    this.init = function(attribute, lng) {
-        this.attribute = attribute;
-        this.lng = lng
-    }
+function getUserLanguage() {
+    let lang = navigator.language || navigator.userLanguage;
+    return lang.split('-')[0]; // Pega somente o código do idioma ("en", "pt", "es")
+}
 
-    // Translate
-
-    this.process = function() {
-        _self = this;
-        var xrhFile = new XMLHttpRequest();
-        // Load content data
-        xrhFile.open("GET", "lng/"+"this".lng+".json", false)
-        xrhFile.onreadystatechange = function ()
-        {
-            if (xrhFile.readyState === 4) {
-                
-                if (xrh.status === 200 || xrhFile.status == 0) {
-                    var LngObject = JSON.parse(xrhFile.responseText);
-                    var allDom = document.getElementByTagName("*");
-                    
-                    for (var i = 0; i <= allDom.lenght; i++) {
-                        var element = allDom[i];
-                        var key = element.getAttribute(_self.attribute);
-                        if (key != null) {
-                            element.innerHTML = LngObject[key];
-                        }
-                    }
-                }
-            }
-        }
+// Muda automaticamente para o idioma detectado
+function autoTranslate() {
+    let userLang = getUserLanguage();
+    let googleFrame = document.querySelector(".goog-te-combo");
+    
+    if (googleFrame) {
+        googleFrame.value = userLang;
+        googleFrame.dispatchEvent(new Event('change')); // Simula a troca de idioma
     }
 }
+
+// Aguarda o Google Translate carregar
+window.addEventListener("load", () => {
+    setTimeout(autoTranslate, 2000);
+});
